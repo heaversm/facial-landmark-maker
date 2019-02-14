@@ -17,7 +17,9 @@ function loadData() {
     // Get each object in the array
     let shapeData = shapesData[i];
     shapes.push(new FaceFeature(shapeData));
+    shapes[i].initShape(); 
   }
+  shapes.splice(2,3);
 }
 
 function setup() {
@@ -63,5 +65,31 @@ class FaceFeature {
   constructor(shapeData){
     this.points = shapeData.points;
     this.doCloseShape = shapeData.close;
+    this.numPoints = this.points.length;
+    
+  }
+
+  initShape(){
+    this.drawShape(true);
+  }
+
+  drawShape(isInitial){
+    beginShape();
+    for (let j = 0; j < this.numPoints; j++) {
+      let position = this.points[j];
+      let posX = position.x;
+      let posY = position.y;
+      let posArr = [posX,posY];
+      if (isInitial){
+        coords.push(posArr);
+      }
+      vertex(posX,posY);
+    }
+    this.doCloseShape ? endShape(CLOSE) : endShape();
+  }
+
+  updateShape(i,pointsArr){
+    this.points[i] = pointsArr;
+    drawShape();
   }
 }
