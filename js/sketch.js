@@ -1,10 +1,12 @@
 let data = {}; // Global object to hold results from the loadJSON call
-let coords = []; // Global array to hold all shapes
-let shapes = [];
+let shapes = []; // Global array to hold all shape arrays of coords
+let coords = []; // Global array to hold all vertex coords
 let mousePressedCoords = [];
 let mouseReleasedCoords = [];
 let isMousePressed = false;
+let closestShapeIndex;
 let closestCoordIndex;
+let mouseMovedX, mouseMovedY;
 
 function preload() {
   data = loadJSON('assets/face-points.json');
@@ -16,10 +18,22 @@ function loadData() {
   for (let i = 0; i < shapesData.length; i++) {
     // Get each object in the array
     let shapeData = shapesData[i];
-    shapes.push(new FaceFeature(shapeData));
-    shapes[i].initShape(); 
+    let shapeArr = [];
+    
+    beginShape();
+    for (let j = 0; j < shapeData.points.length; j++) {
+      let position = shapeData.points[j];
+      let posX = position.x;
+      let posY = position.y;
+      let posArr = [posX,posY];
+      coords.push(posArr);
+      shapeArr.push(posArr);
+      vertex(posX,posY);
+    }
+    shapes.push(shapeArr);
+    shapeData.doCloseShape ? endShape(CLOSE) : endShape();
   }
-  shapes.splice(2,3);
+
 }
 
 function setup() {
@@ -37,59 +51,56 @@ function mousePressed() {
     mousePressedCoords[0] = mouseX;
     mousePressedCoords[1] = mouseY;
     let smallestDist = 1000; //start arbitrarily high
-    for (let i = 0; i < coords.length; i++) {
-      let curCoord = coords[i];
-      let curDist = dist(mouseX, mouseY, curCoord[0], curCoord[1]);
-      if (curDist < smallestDist){
-        smallestDist = curDist;
-        closestCoordIndex = i;
+    for (let i = 0; i < shapes.length; i++) {
+      let curShape = shapes[i];
+      for (let j=0; j<curShape.length;j++){
+        
+        let curCoord = curShape[j];
+        
+        let curDist = dist(mouseX, mouseY, curCoord[0], curCoord[1]);
+        if (curDist < smallestDist){
+          smallestDist = curDist;
+          closestShapeIndex = i;
+          closestCoordIndex = j;
+        }
       }
     }
+    console.log(shapes[closestShapeIndex][closestCoordIndex]);
   }
-  console.log(closestCoordIndex);
+  
 }
 
 function mouseReleased() {
   isMousePressed = false;
+  mouseMovedX = 0;
+  mouseMovedY = 0;
 }
 
 function draw() {
+  background(0);
   if (isMousePressed){
-    let mouseMovedX = Math.abs(mouseX - mousePressedX);
-    let mouseMovedY = Math.abs(mouseY - mousePressedY);
-    coords[closestCoordIndex].posX
-  }
-}
+    //mouseMovedX = mouseX - mousePressedCoords[0];
+    //mouseMovedY = mouseY - mousePressedCoords[1];
 
-class FaceFeature {
-  constructor(shapeData){
-    this.points = shapeData.points;
-    this.doCloseShape = shapeData.close;
-    this.numPoints = this.points.length;
-    
-  }
+    //shapes[closestShapeIndex][closestCoordIndex][0] = shapes[closestShapeIndex][closestCoordIndex][0] + mouseMovedX;
+    //shapes[closestShapeIndex][closestCoordIndex][1] = shapes[closestShapeIndex][closestCoordIndex][1] + mouseMovedY;
+    shapes[closestShapeIndex][closestCoordIndex][0] = mouseX;
+    shapes[closestShapeIndex][closestCoordIndex][1] = mouseY;
 
-  initShape(){
-    this.drawShape(true);
-  }
 
-  drawShape(isInitial){
+
+  }
+  let shapesData = data['shapes'];
+  for (let i = 0; i < shapes.length; i++) {
+    // Get each object in the array
+    let shapeData = shapesData[i];
+    let shapeArrData = shapes[i];
     beginShape();
-    for (let j = 0; j < this.numPoints; j++) {
-      let position = this.points[j];
-      let posX = position.x;
-      let posY = position.y;
-      let posArr = [posX,posY];
-      if (isInitial){
-        coords.push(posArr);
-      }
-      vertex(posX,posY);
+    for (let j = 0; j < shapeArrData.length; j++) {
+      let posArr = shapeArrData[j];
+      vertex(posArr[0],posArr[1]);
     }
-    this.doCloseShape ? endShape(CLOSE) : endShape();
+    shapeData.doCloseShape ? endShape(CLOSE) : endShape();
   }
-
-  updateShape(i,pointsArr){
-    this.points[i] = pointsArr;
-    drawShape();
-  }
+  
 }
