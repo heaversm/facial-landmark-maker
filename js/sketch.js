@@ -8,11 +8,19 @@ let closestShapeIndex;
 let closestCoordIndex;
 let mouseMovedX, mouseMovedY;
 
+let ww = 256;
+let wh = 256;
+let sfX, sfY;
+
+let c; //canvas
+let img;
+
 function preload() {
   data = loadJSON('assets/face-points.json');
+  img = loadImage('assets/001.png'); // Load the image
 }
 
-function loadData() {
+function drawPointsInitial() {
   //draw initial face landmarks
   let shapesData = data['shapes'];
   for (let i = 0; i < shapesData.length; i++) {
@@ -23,8 +31,8 @@ function loadData() {
     beginShape();
     for (let j = 0; j < shapeData.points.length; j++) {
       let position = shapeData.points[j];
-      let posX = position.x;
-      let posY = position.y;
+      let posX = map(position.x,0,ww,0,ww*sfX);
+      let posY = map(position.y,0,wh,0,wh*sfY);
       let posArr = [posX,posY];
       coords.push(posArr);
       shapeArr.push(posArr);
@@ -32,22 +40,25 @@ function loadData() {
     }
     shapes.push(shapeArr);
     shapeData.doCloseShape ? endShape(CLOSE) : endShape();
+
   }
 
 }
 
 function setup() {
-  createCanvas(256, 256);
+  c = createCanvas(img.width, img.height);
+  sfX = img.width/ww;
+  sfY = img.height/wh;
   background(0);
   noSmooth();
   noFill();
   stroke(123,255,0);
-  loadData();
+  drawPointsInitial();
 }
 
 function mousePressed() {
   if (!isMousePressed){
-    isMousePressed = true;
+    handleMousePressed();
     mousePressedCoords[0] = mouseX;
     mousePressedCoords[1] = mouseY;
     let smallestDist = 1000; //start arbitrarily high
@@ -65,12 +76,21 @@ function mousePressed() {
         }
       }
     }
-    console.log(shapes[closestShapeIndex][closestCoordIndex]);
   }
   
 }
 
+function handleMousePressed(){
+  isMousePressed = true;
+  select('body').addClass('mousePressed');
+}
+
 function mouseReleased() {
+  handleMouseReleased();
+}
+
+function handleMouseReleased(){
+  select('body').removeClass('mousePressed');
   isMousePressed = false;
   mouseMovedX = 0;
   mouseMovedY = 0;
@@ -78,16 +98,16 @@ function mouseReleased() {
 
 function draw() {
   background(0);
+  image(img, 0, 0);
   if (isMousePressed){
-    //mouseMovedX = mouseX - mousePressedCoords[0];
-    //mouseMovedY = mouseY - mousePressedCoords[1];
 
-    //shapes[closestShapeIndex][closestCoordIndex][0] = shapes[closestShapeIndex][closestCoordIndex][0] + mouseMovedX;
-    //shapes[closestShapeIndex][closestCoordIndex][1] = shapes[closestShapeIndex][closestCoordIndex][1] + mouseMovedY;
-    shapes[closestShapeIndex][closestCoordIndex][0] = mouseX;
-    shapes[closestShapeIndex][closestCoordIndex][1] = mouseY;
-
-
+    if (mouseX < ww && mouseY < wh){
+      shapes[closestShapeIndex][closestCoordIndex][0] = mouseX;
+      shapes[closestShapeIndex][closestCoordIndex][1] = mouseY;
+    } else {
+      handleMouseReleased();
+      return;
+    }
 
   }
   let shapesData = data['shapes'];
