@@ -24,7 +24,6 @@ function preload() {
   if (urlParams.has('image')){
     imgName = urlParams.get('image');
     fileName = imgName.substring(0, imgName.indexOf('.')) + '.txt';
-    console.log(fileName);
   }
   img = loadImage(`assets/${imgName}`); // Load the image
 }
@@ -38,6 +37,7 @@ function drawPointsInitial() {
     let shapeArr = [];
     
     beginShape();
+
     for (let j = 0; j < shapeData.points.length; j++) {
       let position = shapeData.points[j];
       let posX = map(position.x,0,ww,0,ww*sfX);
@@ -54,7 +54,7 @@ function drawPointsInitial() {
 }
 
 function setup() {
-  writer = createWriter(`${imgName}.txt`);
+  writer = createWriter(fileName);
   imgWidth = img.width;
   imgHeight = img.height;
   c = createCanvas(imgWidth, imgHeight);
@@ -114,7 +114,6 @@ function keyTyped() {
 }
 
 function handlePrintLandmarks(){
-  console.log('print');
 
   for (let i = 0; i < shapes.length; i++) {
     // Get each object in the array

@@ -4,10 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Face Landmark Maker</title>
+    <link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
     <style> 
-      body {padding: 0; margin: 0;} 
+      body {padding: 20; margin: 20; font-family: Arial, Helvetica, sans-serif, serif; } 
       body.mousePressed canvas {
         cursor: none;
+      }
+      .instructions {
+        width: 70vw;
       }
     </style>
     <script src="js/lib/p5.min.js"></script>
@@ -15,5 +19,12 @@
     <script src="js/sketch.js"></script>
   </head>
   <body>
+    <div class="instructions">
+      <h3>Face Landmark Maker</h3>
+      <p>Generates <a href="https://www.pyimagesearch.com/2017/04/03/facial-landmarks-dlib-opencv-python/" target="_blank"></a>Facial Landmarks</a> based off the <a href="https://ibug.doc.ic.ac.uk/resources/facial-point-annotations/" target="_blank">IBUG 300-W</a> dataset model for images in which a face cannot be detected. This is useful in machine learning and computer vision algorithms which require facial landmarks to be present, such as DLib and openCV. I built this after generating some non-human faces with pix2pix that I wanted to use with <a href="https://github.com/valillon/FaceMorph" target="_blank">FaceMorph</a></p>
+      <p>
+        <strong>INSTRUCTIONS:</strong> Place the images you want to make landmarks for in the 'assets' folder. To load a specific image, put the filename with extension in the URL 'image' parameter, e.g. 'http://localhost:8000/?image=myimage.png'. Drag the points to fit the image. Then hit 's' to save out the repositioned points to a text file corresponding to your image name. 
+      </p>
+    </div>
   </body>
 </html>
