@@ -1,0 +1,86 @@
+      :root {
+        --pad-std: 10px;
+      }
+      body {
+        padding: var(--pad-std); 
+        margin: var(--pad-std); 
+        /*font-family: Arial, Helvetica, sans-serif, serif;*/
+        /*font-family: 'Merriweather', sans;*/
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 300;
+        background-color: #fefefe;
+      } 
+      body.mousePressed canvas {
+        cursor: none;
+      }
+      h1,h2,h3,h4 {
+        /*font-family: 'Lora', serif;*/
+        font-family: 'Proza Libre', sans-serif;
+        font-weight: 700;
+      }
+
+      h3 {
+        font-size: 1.6em;
+      }
+
+      a {
+        color: #007eff;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(0,0,0,.1);
+      }
+
+      p {
+        line-height: 1.6em;
+      }
+
+      strong {
+        font-weight: 700;
+      }
+
+      .instructions {
+        width: 40vw;
+        padding: var(--pad-std);
+        border: 1px solid #ddd;
+        background-color: white;
+        border-radius: 10px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
+
+     
+
+      .instructions.hide{
+        height: 38px;
+        width: 48px;
+        border-width: 0;
+      }
+
+      .instructions.hide .instruction-text {
+        display: none;
+      }
+
+      .title {
+        margin-top: var(--pad-std);
+      }
+
+      .highlight {
+        background-color: #eaeaea;
+        padding: 0 5px;
+        border-radius: 5px;
+        margin-left: 5px;
+        margin-right: 5px;
+      }
+
+      .close {
+        position: absolute;
+        right: 15px;
+        top: 20px;
+        height: 25px;
+        width: 25px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: center;
+        background-color: #eee;
+      }
+

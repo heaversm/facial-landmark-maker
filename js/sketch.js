@@ -18,10 +18,16 @@ let imgName = '002.png';
 let fileName = imgName.substring(0, imgName.indexOf('.')) + '.txt';
 let writer;
 
+let instructionsAreVisible = true;
+
+let $closeButton = document.querySelector('.close');
+let $instructions = document.querySelector('.instructions');
+
 function preload() {
   data = loadJSON('assets/face-points.json');
   let urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has('image')){
+    minimizeInstructions();
     imgName = urlParams.get('image');
     fileName = imgName.substring(0, imgName.indexOf('.')) + '.txt';
   }
@@ -65,6 +71,27 @@ function setup() {
   noFill();
   stroke(123,255,0);
   drawPointsInitial();
+  $closeButton.addEventListener('click',onCloseClick);
+}
+
+function onCloseClick(){
+  if (instructionsAreVisible){
+    minimizeInstructions();
+  } else {
+    maximizeInstructions();
+  }
+}
+
+function minimizeInstructions(){
+  $instructions.classList.add('hide');
+  instructionsAreVisible = false;
+  $closeButton.innerHTML = 'i'
+}
+
+function maximizeInstructions(){
+  $instructions.classList.remove('hide');
+  instructionsAreVisible = true;
+  $closeButton.innerHTML = '-'
 }
 
 function mousePressed() {
