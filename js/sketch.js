@@ -25,7 +25,10 @@ let instructionsAreVisible = true;
 let $closeButton = document.querySelector('.close');
 let $instructions = document.querySelector('.instructions');
 let $colors = document.querySelectorAll('.color');
-let activeColor;
+let $saveButton = document.querySelector('.save-btn');
+let $loadButton = document.querySelector('.load-btn');
+let $fileInput = document.querySelector('.file-input');
+let activeColor, secondaryColor;
 
 console.log($colors)
 
@@ -74,12 +77,17 @@ function setup() {
   cBlue = color(0,255,255);
   cRed = color(255,64,255);
   activeColor = cGreen;
+  secondaryColor = cRed;
   background(0);
   noSmooth();
   noFill();
   stroke(activeColor);
   drawPointsInitial();
   $closeButton.addEventListener('click',onCloseClick);
+  $saveButton.addEventListener('click',handlePrintLandmarks);
+  $loadButton.addEventListener('click',handleLoadImage);
+  
+
   $colors.forEach((el)=>{
     el.addEventListener('click',()=>{
       handleColorChange(el.dataset.id);
@@ -87,16 +95,25 @@ function setup() {
   })
 }
 
+function handleLoadImage(){
+  const fileToLoad = $fileInput.value;
+  let urlToLoad = `http://${window.location.host}?image=${fileToLoad}`;
+  window.location.href = urlToLoad;
+}
+
 function handleColorChange(color){
   switch(color){
     case 'green':
       activeColor = cGreen;
+      secondaryColor = cRed;
       break;
     case 'blue':
       activeColor = cBlue;
+      secondaryColor = cRed;
       break;
     case 'red':
       activeColor = cRed;
+      secondaryColor = cGreen;
       break;
   }
 }
@@ -198,13 +215,14 @@ function draw() {
 
   }
   let shapesData = data['shapes'];
-  stroke(activeColor);
+  
   for (let i = 0; i < shapes.length; i++) {
     // Get each object in the array
     let shapeData = shapesData[i];
     let shapeArrData = shapes[i];
     
     beginShape();
+    stroke(activeColor);
     for (let j = 0; j < shapeArrData.length; j++) {
       let posArr = shapeArrData[j];
       vertex(posArr[0],posArr[1]);
@@ -215,24 +233,12 @@ function draw() {
     }
     shapeData.doCloseShape ? endShape(CLOSE) : endShape();
 
-    
-  }
-
-  stroke(255,0,0);
-  
-
-  for (let i = 0; i < shapes.length; i++) {
-
-    let shapeArrData = shapes[i];
-
+    stroke(secondaryColor);
     for (let j = 0; j < shapeArrData.length; j++) {
       let posArr = shapeArrData[j];
       point(posArr[0],posArr[1]);
     }
-
   }
-
-  
 
   
 }

@@ -90,7 +90,7 @@ strong {
 .color {
   width: 20px;
   height: 20px;
-  margin: 0 5px;
+  margin: 0 2.5px;
 }
 
 .color-container {
@@ -100,6 +100,10 @@ strong {
 
 .color:first-child {
   margin-left: 0;
+}
+
+.color:last-child {
+  margin-right: 0;
 }
 
 .color[data-id='green']{
@@ -114,7 +118,7 @@ strong {
   background: rgb(255,64,255);
 }
 
-.save-btn {
+.btn {
   font-family: 'Proza Libre', sans-serif;
   height: 20px;
   font-size: .8em;
@@ -126,8 +130,27 @@ strong {
   border: 1px solid #ccc;
 }
 
+.load-btn {
+  height: 15px;
+  font-size: .6em;
+}
+
 .controls-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.file-container {
+  height: 20px;
+  border: 1px solid #ccc;
+  padding: 2px 5px 0;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+}
+
+.input {
+  border: 0;
+  background-color: transparent;
 }
