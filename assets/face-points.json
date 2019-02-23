@@ -1,7 +1,8 @@
 {
     "shapes": [
         {
-            "close": false,
+            "shapeName": "face",
+            "doCloseShape": false,
             "startIndex": 0,
             "endIndex": 16,
             "points": [
@@ -75,7 +76,8 @@
                 }
             ]
         },{
-            "close": false,
+            "shapeName": "lbrow",
+            "doCloseShape": false,
             "startIndex": 17,
             "endIndex": 21,
             "points": 
@@ -102,7 +104,8 @@
                 }
             ]
         },{
-            "close": false,
+            "shapeName": "rbrow",
+            "doCloseShape": false,
             "startIndex": 22,
             "endIndex": 26,
             "points": [
@@ -128,7 +131,8 @@
                 }
             ]
         },{
-            "close": false,
+            "shapeName": "nose",
+            "doCloseShape": false,
             "startIndex": 27,
             "endIndex": 35,
             "points": [
@@ -170,7 +174,8 @@
                 }
             ]
         },{
-            "close": false,
+            "shapeName": "leye",
+            "doCloseShape": true,
             "startIndex": 36,
             "endIndex": 41,
             "points": [
@@ -200,7 +205,8 @@
                 }
             ]
         },{
-            "close": false,
+            "shapeName": "reye",
+            "doCloseShape": true,
             "startIndex": 42,
             "endIndex": 47,
             "points": [
@@ -230,7 +236,8 @@
                 }
             ]
         },{
-            "close": false,
+            "shapeName": "lips",
+            "doCloseShape": true,
             "startIndex": 48,
             "endIndex": 59,
             "points": [
@@ -284,7 +291,8 @@
                 }
             ]
         }, {
-            "close": false,
+            "shapeName": "mouth",
+            "doCloseShape": true,
             "startIndex": 60,
             "endIndex": 67,
             "points": [

@@ -17,6 +17,14 @@
           <strong>INSTRUCTIONS:</strong> Place the images you want to make landmarks for in the <em>'assets'</em> folder. To load a specific image, put the filename with extension in the URL <em>'image'</em> parameter, e.g. <span class="highlight">'http://localhost:8000/?image=myimage.png'</span>. Drag the points to fit the image. Then <span class="highlight">hit <em>'s'</em> to save</span>the points to a text file.
         </p>
         <p><strong>APPLICATION:</strong> Generates <a href="https://www.pyimagesearch.com/2017/04/03/facial-landmarks-dlib-opencv-python/" target="_blank"></a>Facial Landmarks</a> based off the <a href="https://ibug.doc.ic.ac.uk/resources/facial-point-annotations/" target="_blank">IBUG 300-W</a> dataset for images in which a face cannot be detected. This is useful in machine learning and computer vision applications such as DLib and openCV. I built this after generating a bunch non-recognizable faces with pix2pix that I wanted to use with <a href="https://github.com/valillon/FaceMorph" target="_blank">FaceMorph</a>.</p>
+        <div class="controls-container">
+          <div class="color-container">
+            <div class="color" data-id="red"></div>
+            <div class="color" data-id="green"></div>
+            <div class="color" data-id="blue"></div>
+          </div>
+          <div class="save-btn">SAVE</div>
+        </div>
       </div>
     </div>
     <script src="js/lib/p5.min.js"></script>

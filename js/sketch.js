@@ -12,6 +12,8 @@ let wh = 256;
 let sfX, sfY;
 let imgWidth, imgHeight;
 
+let cGreen,cBlue,cRed;
+
 let c; //canvas
 let img;
 let imgName = '002.png';
@@ -22,6 +24,10 @@ let instructionsAreVisible = true;
 
 let $closeButton = document.querySelector('.close');
 let $instructions = document.querySelector('.instructions');
+let $colors = document.querySelectorAll('.color');
+let activeColor;
+
+console.log($colors)
 
 function preload() {
   data = loadJSON('assets/face-points.json');
@@ -42,7 +48,6 @@ function drawPointsInitial() {
     let shapeData = shapesData[i];
     let shapeArr = [];
     
-    beginShape();
 
     for (let j = 0; j < shapeData.points.length; j++) {
       let position = shapeData.points[j];
@@ -50,10 +55,9 @@ function drawPointsInitial() {
       let posY = map(position.y,0,wh,0,wh*sfY);
       let posArr = [posX,posY];
       shapeArr.push(posArr);
-      vertex(posX,posY);
     }
+    
     shapes.push(shapeArr);
-    shapeData.doCloseShape ? endShape(CLOSE) : endShape();
 
   }
 
@@ -66,12 +70,35 @@ function setup() {
   c = createCanvas(imgWidth, imgHeight);
   sfX = imgWidth/ww;
   sfY = imgHeight/wh;
+  cGreen = color(123,255,0);
+  cBlue = color(0,255,255);
+  cRed = color(255,64,255);
+  activeColor = cGreen;
   background(0);
   noSmooth();
   noFill();
-  stroke(123,255,0);
+  stroke(activeColor);
   drawPointsInitial();
   $closeButton.addEventListener('click',onCloseClick);
+  $colors.forEach((el)=>{
+    el.addEventListener('click',()=>{
+      handleColorChange(el.dataset.id);
+    });
+  })
+}
+
+function handleColorChange(color){
+  switch(color){
+    case 'green':
+      activeColor = cGreen;
+      break;
+    case 'blue':
+      activeColor = cBlue;
+      break;
+    case 'red':
+      activeColor = cRed;
+      break;
+  }
 }
 
 function onCloseClick(){
@@ -171,16 +198,41 @@ function draw() {
 
   }
   let shapesData = data['shapes'];
+  stroke(activeColor);
   for (let i = 0; i < shapes.length; i++) {
     // Get each object in the array
     let shapeData = shapesData[i];
     let shapeArrData = shapes[i];
+    
     beginShape();
     for (let j = 0; j < shapeArrData.length; j++) {
       let posArr = shapeArrData[j];
       vertex(posArr[0],posArr[1]);
     }
+
+    if (shapeData.shapeName == "nose"){
+      vertex(shapeArrData[3][0],shapeArrData[3][1]); //draw a point back to center of nose for looks
+    }
     shapeData.doCloseShape ? endShape(CLOSE) : endShape();
+
+    
   }
+
+  stroke(255,0,0);
+  
+
+  for (let i = 0; i < shapes.length; i++) {
+
+    let shapeArrData = shapes[i];
+
+    for (let j = 0; j < shapeArrData.length; j++) {
+      let posArr = shapeArrData[j];
+      point(posArr[0],posArr[1]);
+    }
+
+  }
+
+  
+
   
 }
