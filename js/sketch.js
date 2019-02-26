@@ -3,9 +3,11 @@ let shapes = []; // Global array to hold all shape arrays of coords
 let mousePressedCoords = [];
 let mouseReleasedCoords = [];
 let isMousePressed = false;
+let marqueeIsActive = false; //true when shift key selected
 let closestShapeIndex;
 let closestCoordIndex;
-let mouseMovedX, mouseMovedY;
+let mouseMovedX, mouseMovedY, mouseStartX, mouseStartY;
+let selectedPoints = [];
 
 let ww = 256;
 let wh = 256;
@@ -28,9 +30,7 @@ let $colors = document.querySelectorAll('.color');
 let $saveButton = document.querySelector('.save-btn');
 let $loadButton = document.querySelector('.load-btn');
 let $fileInput = document.querySelector('.file-input');
-let activeColor, secondaryColor;
-
-console.log($colors)
+let activeColor, secondaryColor, highlightedColor;
 
 function preload() {
   data = loadJSON('assets/face-points.json');
@@ -50,10 +50,10 @@ function drawPointsInitial() {
     // Get each object in the array
     let shapeData = shapesData[i];
     let shapeArr = [];
-    
 
     for (let j = 0; j < shapeData.points.length; j++) {
       let position = shapeData.points[j];
+      position.isSelected = false; //for marquee selection
       let posX = map(position.x,0,ww,0,ww*sfX);
       let posY = map(position.y,0,wh,0,wh*sfY);
       let posArr = [posX,posY];
@@ -76,8 +76,10 @@ function setup() {
   cGreen = color(123,255,0);
   cBlue = color(0,255,255);
   cRed = color(255,64,255);
+  cYellow = color(255,237,0);
   activeColor = cGreen;
   secondaryColor = cRed;
+  highlightedColor = cYellow;
   background(0);
   noSmooth();
   noFill();
@@ -164,6 +166,8 @@ function mousePressed() {
 
 function handleMousePressed(){
   isMousePressed = true;
+  mouseStartX = mouseX;
+  mouseStartY = mouseY;
   select('body').addClass('mousePressed');
 }
 
@@ -176,6 +180,11 @@ function handleMouseReleased(){
   isMousePressed = false;
   mouseMovedX = 0;
   mouseMovedY = 0;
+  if (keyIsDown(SHIFT) && selectedPoints.length > 0){
+    marqueeIsActive = true;
+  } else {
+    marqueeIsActive = false;
+  }
 }
 
 function keyTyped() {
@@ -200,20 +209,87 @@ function handlePrintLandmarks(){
 
 }
 
+function moveClosestPoint(){
+  if (mouseX > 0 && mouseX < imgWidth && mouseY > 0 && mouseY < imgHeight){
+    shapes[closestShapeIndex][closestCoordIndex][0] = mouseX;
+    shapes[closestShapeIndex][closestCoordIndex][1] = mouseY;
+  } else {
+    handleMouseReleased();
+    return;
+  }
+}
+
+function moveMultiplePoints(){
+  mouseMovedX = mouseX - mouseStartX;
+  mouseMovedY = mouseY-mouseStartY;
+  for (let i = 0; i < selectedPoints.length; i++) {
+    let thisPoint = selectedPoints[i];
+    thisPoint[0] = thisPoint[0] + mouseMovedX;
+    thisPoint[1] = thisPoint[1] + mouseMovedY;
+  }
+  mouseStartX = mouseX;
+  mouseStartY = mouseY;
+}
+
+function selectMultiplePoints(){
+  
+  mouseMovedX = mouseX - mouseStartX;
+  mouseMovedY = mouseY-mouseStartY;
+
+  let mouseEndX, mouseEndY;
+
+  if (mouseMovedX < 0){ //MH - TODO - fix if neg
+    mouseEndX = mouseStartX;
+    mouseStartX = mouseX;
+  } else {
+    mouseEndX = mouseX;
+  }
+
+  if (mouseMovedY < 0){ //MH - TODO - fix if neg
+    mouseEndY = mouseStartY;
+    mouseStartY = mouseY;
+  } else {
+    mouseEndY = mouseY;
+  }
+  
+  for (let i = 0; i < shapes.length; i++) {
+    let shapesData = data['shapes'];
+    let shapeData = shapesData[i];
+    let shapeArrData = shapes[i];
+    for (let j = 0; j < shapeArrData.length; j++) {
+      let posArr = shapeArrData[j];
+      let position = shapeData.points[j];
+      //console.log(posArr[0],mouseStartX,mouseEndX,posArr[0], mouseStartY, mouseEndY);
+      if (posArr[0] > mouseStartX && posArr[0] < mouseEndX && posArr[1] > mouseStartY && posArr[1] < mouseEndY){
+        //point is contained within dragged area
+        
+        if (!position.isSelected){
+          position.isSelected = true;
+          selectedPoints.push(posArr);
+        }
+      }
+    }
+  }
+  console.log(selectedPoints.length);
+}
+
 function draw() {
   background(0);
   image(img, 0, 0);
   if (isMousePressed){
 
-    if (mouseX > 0 && mouseX < imgWidth && mouseY > 0 && mouseY < imgHeight){
-      shapes[closestShapeIndex][closestCoordIndex][0] = mouseX;
-      shapes[closestShapeIndex][closestCoordIndex][1] = mouseY;
-    } else {
-      handleMouseReleased();
-      return;
+    if (!keyIsDown(SHIFT)){
+      moveClosestPoint();
+    } else { //shift is down
+      if (selectedPoints.length > 0 && marqueeIsActive){
+        moveMultiplePoints();
+      } else {
+        selectMultiplePoints();
+      }
     }
-
+    
   }
+  
   let shapesData = data['shapes'];
   
   for (let i = 0; i < shapes.length; i++) {
@@ -233,9 +309,10 @@ function draw() {
     }
     shapeData.doCloseShape ? endShape(CLOSE) : endShape();
 
-    stroke(secondaryColor);
     for (let j = 0; j < shapeArrData.length; j++) {
       let posArr = shapeArrData[j];
+      let position = shapeData.points[j];
+      stroke(position.isSelected ? highlightedColor : secondaryColor);
       point(posArr[0],posArr[1]);
     }
   }
