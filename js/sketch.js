@@ -169,6 +169,9 @@ function handleMousePressed(){
   mouseStartX = mouseX;
   mouseStartY = mouseY;
   select('body').addClass('mousePressed');
+  if (keyIsDown(SHIFT)){
+    marqueeIsActive = true;
+  }
 }
 
 function mouseReleased() {
@@ -180,11 +183,24 @@ function handleMouseReleased(){
   isMousePressed = false;
   mouseMovedX = 0;
   mouseMovedY = 0;
-  if (keyIsDown(SHIFT) && selectedPoints.length > 0){
-    marqueeIsActive = true;
-  } else {
-    marqueeIsActive = false;
+  if (mouseX == mouseStartX && mouseStartY == mouseY && !keyIsDown(SHIFT)){ //clicking without moving, clear marquee
+    clearSelectedPoints();
   }
+}
+
+function clearSelectedPoints(){
+  let shapesData = data['shapes'];
+  for (let i = 0; i < shapes.length; i++) {
+    let shapeData = shapesData[i];
+    let shapeArrData = shapes[i];
+    for (let j = 0; j < shapeArrData.length; j++) {
+      let posArr = shapeArrData[j];
+      let position = shapeData.points[j];
+      position.isSelected = false;
+    }
+  }
+  selectedPoints = [];
+  marqueeIsActive = false;
 }
 
 function keyTyped() {
@@ -229,6 +245,7 @@ function moveMultiplePoints(){
   }
   mouseStartX = mouseX;
   mouseStartY = mouseY;
+
 }
 
 function selectMultiplePoints(){
@@ -259,9 +276,7 @@ function selectMultiplePoints(){
     for (let j = 0; j < shapeArrData.length; j++) {
       let posArr = shapeArrData[j];
       let position = shapeData.points[j];
-      //console.log(posArr[0],mouseStartX,mouseEndX,posArr[0], mouseStartY, mouseEndY);
       if (posArr[0] > mouseStartX && posArr[0] < mouseEndX && posArr[1] > mouseStartY && posArr[1] < mouseEndY){
-        //point is contained within dragged area
         
         if (!position.isSelected){
           position.isSelected = true;
@@ -270,24 +285,22 @@ function selectMultiplePoints(){
       }
     }
   }
-  console.log(selectedPoints.length);
 }
 
 function draw() {
   background(0);
   image(img, 0, 0);
   if (isMousePressed){
-
-    if (!keyIsDown(SHIFT)){
-      moveClosestPoint();
-    } else { //shift is down
-      if (selectedPoints.length > 0 && marqueeIsActive){
+    if (keyIsDown(SHIFT)){
+      //marqueeIsActive = true;
+      selectMultiplePoints();
+    } else {
+      if (!marqueeIsActive){
+        moveClosestPoint();
+      } else if (marqueeIsActive && selectedPoints.length) { //marquee is active
         moveMultiplePoints();
-      } else {
-        selectMultiplePoints();
       }
     }
-    
   }
   
   let shapesData = data['shapes'];
