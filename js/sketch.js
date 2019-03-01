@@ -253,21 +253,9 @@ function selectMultiplePoints(){
   mouseMovedX = mouseX - mouseStartX;
   mouseMovedY = mouseY-mouseStartY;
 
-  let mouseEndX, mouseEndY;
+  let mouseEndX = mouseX;
+  let mouseEndY = mouseY;
 
-  if (mouseMovedX < 0){ //MH - TODO - fix if neg
-    mouseEndX = mouseStartX;
-    mouseStartX = mouseX;
-  } else {
-    mouseEndX = mouseX;
-  }
-
-  if (mouseMovedY < 0){ //MH - TODO - fix if neg
-    mouseEndY = mouseStartY;
-    mouseStartY = mouseY;
-  } else {
-    mouseEndY = mouseY;
-  }
   
   for (let i = 0; i < shapes.length; i++) {
     let shapesData = data['shapes'];
@@ -276,15 +264,35 @@ function selectMultiplePoints(){
     for (let j = 0; j < shapeArrData.length; j++) {
       let posArr = shapeArrData[j];
       let position = shapeData.points[j];
-      if (posArr[0] > mouseStartX && posArr[0] < mouseEndX && posArr[1] > mouseStartY && posArr[1] < mouseEndY){
-        
-        if (!position.isSelected){
-          position.isSelected = true;
-          selectedPoints.push(posArr);
+
+      let isInBounds = false;
+      console.log(mouseMovedX,mouseMovedY);
+
+      if (mouseMovedX > 0 && mouseMovedY > 0){
+        if (posArr[0] > mouseStartX && posArr[0] < mouseEndX && posArr[1] > mouseStartY && posArr[1] < mouseEndY){
+          console.log('inBounds');
+          isInBounds = true;
         }
+      } else if (mouseMovedX < 0 && mouseMovedY > 0){
+        if (posArr[0] < mouseStartX && posArr[0] > mouseEndX && posArr[1] > mouseStartY && posArr[1] < mouseEndY){
+          isInBounds = true;
+        }
+      } else if (mouseMovedX > 0 && mouseMovedY < 0){
+        if (posArr[0] > mouseStartX && posArr[0] < mouseEndX && posArr[1] < mouseStartY && posArr[1] > mouseEndY){
+          isInBounds = true;
+        }
+      } else if (mouseMovedX < 0 && mouseMovedY < 0){
+        if (posArr[0] < mouseStartX && posArr[0] > mouseEndX && posArr[1] < mouseStartY && posArr[1] > mouseEndY){
+          isInBounds = true;
+        }
+      }
+      if (!position.isSelected && isInBounds){
+        position.isSelected = true;
+        selectedPoints.push(posArr);
       }
     }
   }
+  console.log(selectedPoints.length);
 }
 
 function draw() {
