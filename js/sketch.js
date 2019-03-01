@@ -256,7 +256,6 @@ function selectMultiplePoints(){
   let mouseEndX = mouseX;
   let mouseEndY = mouseY;
 
-  
   for (let i = 0; i < shapes.length; i++) {
     let shapesData = data['shapes'];
     let shapeData = shapesData[i];
@@ -266,11 +265,9 @@ function selectMultiplePoints(){
       let position = shapeData.points[j];
 
       let isInBounds = false;
-      console.log(mouseMovedX,mouseMovedY);
 
       if (mouseMovedX > 0 && mouseMovedY > 0){
         if (posArr[0] > mouseStartX && posArr[0] < mouseEndX && posArr[1] > mouseStartY && posArr[1] < mouseEndY){
-          console.log('inBounds');
           isInBounds = true;
         }
       } else if (mouseMovedX < 0 && mouseMovedY > 0){
@@ -292,7 +289,9 @@ function selectMultiplePoints(){
       }
     }
   }
-  console.log(selectedPoints.length);
+  stroke(255,255,255);
+  fill(255,255,255,50);
+  rect(mouseStartX, mouseStartY, mouseMovedX, mouseMovedY);
 }
 
 function draw() {
@@ -319,6 +318,7 @@ function draw() {
     let shapeArrData = shapes[i];
     
     beginShape();
+    noFill();
     stroke(activeColor);
     for (let j = 0; j < shapeArrData.length; j++) {
       let posArr = shapeArrData[j];
