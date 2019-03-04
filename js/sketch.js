@@ -2,25 +2,25 @@ let data = {}; // Global object to hold results from the loadJSON call
 let shapes = []; // Global array to hold all shape arrays of coords
 let mousePressedCoords = [];
 let mouseReleasedCoords = [];
-let isMousePressed = false;
+let isMousePressed = false; 
 let marqueeIsActive = false; //true when shift key selected
 let closestShapeIndex;
 let closestCoordIndex;
 let mouseMovedX, mouseMovedY, mouseStartX, mouseStartY;
 let selectedPoints = [];
-let activePicker,secondaryPicker;
+let activePicker,secondaryPicker,selectedPicker;
 
 let ww = 256;
 let wh = 256;
-let sfX, sfY;
+let sfX, sfY; //x position with base width and height scaled to loaded image ratio
 let imgWidth, imgHeight;
 
-let cGreen,cBlue,cRed;
+let cGreen,cBlue,cRed, cYellow, cWhite; //some color variables
 
 let c; //canvas
 let img;
-let imgName = '002.png';
-let pointsFileName = imgName.substring(0, imgName.indexOf('.')) + '.txt';
+let imgName = 'assets/001.png';
+let pointsFileName = imgName.substring(0, imgName.indexOf('.')) + '.txt'; //write to a file with a name based off the loaded image
 let writer;
 
 
@@ -30,7 +30,7 @@ let $imageButton = document.querySelector('.image-btn');
 let $imageInput = document.querySelector('.image-input');
 let $pointsButton = document.querySelector('.points-btn');
 let $pointsInput = document.querySelector('.points-input');
-let activeColor, secondaryColor, highlightedColor;
+let activeColor, secondaryColor, selectedColor;
 
 let loadedPoints = [];
 let loadedPointsArr = [];
@@ -39,20 +39,18 @@ function preload() {
   data = loadJSON('assets/face-points.json');
   let urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has('image')){
-    //minimizeUI();
     imgName = urlParams.get('image');
     pointsFileName = imgName.substring(0, imgName.indexOf('.')) + '.txt';
     $imageInput.value = imgName;
   }
-  img = loadImage(`assets/${imgName}`); // Load the image
+  img = loadImage(`${imgName}`); // Load the image
 
   let pointsFile;
   if (urlParams.has('points')){
-    //minimizeUI();
     pointsFile = urlParams.get('points');
     pointsFileName = pointsFile;
     $pointsInput.value = pointsFileName;
-    loadedPoints = loadStrings(`assets/${pointsFile}`,pointsLoadSuccess,pointsLoadError);
+    loadedPoints = loadStrings(`${pointsFile}`,pointsLoadSuccess,pointsLoadError);
   }
 
 }
@@ -127,23 +125,31 @@ function setup() {
   cWhite = color('#ffffff');
   activeColor = cBlue;
   secondaryColor = cYellow;
-  highlightedColor = cWhite;
+  selectedColor = cWhite;
   activePicker = createColorPicker(activeColor)
     .parent('active-picker-container')
     .addClass('color-picker-input');
   secondaryPicker = createColorPicker(secondaryColor)
     .parent('secondary-picker-container')
     .addClass('color-picker-input');
+  selectedPicker = createColorPicker(selectedColor)
+    .parent('selected-picker-container')
+    .addClass('color-picker-input');
   activePicker.input(setActiveColor);
   secondaryPicker.input(setSecondaryColor);
+  selectedPicker.input(setSelectedColor);
   background(0);
   noSmooth();
   noFill();
   stroke(activeColor);
   drawPointsInitial();
   $saveButton.addEventListener('click',handlePrintLandmarks);
-  $imageButton.addEventListener('click',handleLoadImage);
-  $pointsButton.addEventListener('click',handleLoadPoints);
+  $imageButton.addEventListener('click',()=>{
+    handleLoad('image')
+  });
+  $pointsButton.addEventListener('click',()=>{
+    handleLoad('points')
+  });
   
 
   $colors.forEach((el)=>{
@@ -158,15 +164,22 @@ function minimizeUI(){
   $('.collapse').collapse('hide');
 }
 
-function handleLoadImage(){
-  const fileToLoad = $imageInput.value;
-  let urlToLoad = `http://${window.location.host}?image=${fileToLoad}`;
-  window.location.href = urlToLoad;
-}
+function handleLoad(type){
+  const imgToLoad = $imageInput.value;
+  const pointsToLoad = $pointsInput.value;
 
-function handleLoadPoints(){
-  const fileToLoad = $pointsInput.value;
-  let urlToLoad = `http://${window.location.host}?points=${fileToLoad}`;
+  if (!imgToLoad && !pointsToLoad){
+    return;
+  }
+
+  let urlToLoad;
+  if (imgToLoad && pointsToLoad){
+    urlToLoad = `http://${window.location.host}?image=${imgToLoad}&points=${pointsToLoad}`;
+  } else if (imgToLoad && !pointsToLoad){
+    urlToLoad = `http://${window.location.host}?image=${imgToLoad}`;
+  } else if (pointsToLoad && !imgToLoad){
+    urlToLoad = `http://${window.location.host}?points=${pointsToLoad}`;
+  }
   window.location.href = urlToLoad;
 }
 
@@ -194,6 +207,10 @@ function setActiveColor(){
 
 function setSecondaryColor(){
   secondaryColor = secondaryPicker.color();
+}
+
+function setSelectedColor(){
+  selectedColor = selectedPicker.color();
 }
 
 function mousePressed() {
@@ -257,12 +274,6 @@ function clearSelectedPoints(){
   }
   selectedPoints = [];
   marqueeIsActive = false;
-}
-
-function keyTyped() {
-  if (key === 's') {
-    handlePrintLandmarks();
-  }
 }
 
 function handlePrintLandmarks(){
@@ -389,7 +400,7 @@ function draw() {
     for (let j = 0; j < shapeArrData.length; j++) {
       let posArr = shapeArrData[j];
       let position = shapeData.points[j];
-      stroke(position.isSelected ? highlightedColor : secondaryColor);
+      stroke(position.isSelected ? selectedColor : secondaryColor);
       point(posArr[0],posArr[1]);
     }
   }
