@@ -43,7 +43,7 @@ function preload() {
     pointsFileName = imgName.substring(0, imgName.indexOf('.')) + '.txt';
     $imageInput.value = imgName;
   }
-  img = loadImage(`${imgName}`); // Load the image
+  img = loadImage(`${imgName}`,imgLoadSuccess,imgLoadError); // Load the image
 
   let pointsFile;
   if (urlParams.has('points')){
@@ -56,11 +56,19 @@ function preload() {
 }
 
 function pointsLoadSuccess(){
-  console.log('success');
+  //console.log('success');
 }
 
 function pointsLoadError(){
-  console.log('error');
+  //console.log('error');
+}
+
+function imgLoadSuccess(){
+  //console.log('success');
+}
+
+function imgLoadError(){
+  //console.log('error');
 }
 
 function drawPointsInitial() {
