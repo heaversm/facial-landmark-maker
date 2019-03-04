@@ -1,38 +1,119 @@
 <!DOCTYPE html>
 <html lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Face Landmark Maker</title>
-    <link href="https://fonts.googleapis.com/css?family=Lora:400,700|Merriweather:300,400,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700|Proza+Libre:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <div class="instructions">
-      <div class="close">-</div>
-      <div class="instruction-text">
-        <h3 class="title">Face Landmark Maker</h3>
-        <p>
-          <strong>INSTRUCTIONS:</strong> Place the images you want to make landmarks for in the <em>'assets'</em> folder. To load a specific image, type the filename with extension in the input box below and hit `load`. Drag the points to fit the image. Then <span class="highlight">hit <em>'s'</em> to save</span>the points to a text file.
-        </p>
-        <p><strong>APPLICATION:</strong> Generates <a href="https://www.pyimagesearch.com/2017/04/03/facial-landmarks-dlib-opencv-python/" target="_blank"></a>Facial Landmarks</a> based off the <a href="https://ibug.doc.ic.ac.uk/resources/facial-point-annotations/" target="_blank">IBUG 300-W</a> dataset for images in which a face cannot be detected. This is useful in machine learning and computer vision applications such as DLib and openCV. I built this to use <a href="https://github.com/valillon/FaceMorph" target="_blank">FaceMorph</a> with images unrecognizable by openCV face detection.</p>
-        <div class="controls-container">
-          <div class="color-container">
-            <div class="color" data-id="red"></div>
-            <div class="color" data-id="green"></div>
-            <div class="color" data-id="blue"></div>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Face Landmark Maker</title>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="controls-container fixed-top">
+    <div class="accordion" id="accordionExample">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h2 class="mb-0">
+            <button class="btn btn-link btn-collapse" type="button" data-toggle="collapse" data-target="#collapseOne"
+              aria-expanded="false" aria-controls="collapseOne">
+              Instructions
+            </button>
+          </h2>
+        </div>
+
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+            <p>Place the images you want to make landmarks for in the <em>'assets'</em> folder. To load a specific
+              image, check the box next to image, type the filename with extension in the input box below and hit <em>load</em>.</p>
+              <p>Drag the points to fit the image. Then click <em>save landmarks</em> to save the points to a text file.</p>
+              <p>If you want to load a previous landmarks file, place it in the <em>'assets'</em> folder, check the box next to <em>points</em>, then type its filename with extension in the <em>points</em> field and click <em>load</em></p>
+              <p>If the lines are hard to see on your image, you can choose a color to change the line theme.</p>
           </div>
-          <div class="file-container">
-            <input type="text" class="file-input input" placeholder="myimage.png">
-            <div class="load-btn btn">LOAD</div>
-          </div>
-          <div class="save-btn btn">SAVE</div>
         </div>
       </div>
+      <div class="card">
+        <div class="card-header" id="headingTwo">
+          <h2 class="mb-0">
+            <button class="btn btn-link btn-collapse collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo"
+              aria-expanded="false" aria-controls="collapseTwo">
+              Application
+            </button>
+          </h2>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+          <div class="card-body">
+            <p>Generates <a href="https://www.pyimagesearch.com/2017/04/03/facial-landmarks-dlib-opencv-python/"
+                target="_blank"></a>Facial Landmarks</a> based off the <a
+                href="https://ibug.doc.ic.ac.uk/resources/facial-point-annotations/" target="_blank">IBUG 300-W</a>
+              dataset for images in which a face cannot be detected. This is useful in machine learning and computer
+              vision applications such as DLib and openCV.</p><p>I built this to use <a
+                href="https://github.com/valillon/FaceMorph" target="_blank">FaceMorph</a> with images unrecognizable by
+              openCV face detection.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed btn-collapse" type="button" data-toggle="collapse" data-target="#collapseThree"
+              aria-expanded="true" aria-controls="collapseThree">
+              Controls
+            </button>
+          </h2>
+        </div>
+        <div id="collapseThree" class="collapse show" aria-labelledby="headingThree" data-parent="#accordionExample">
+          <div class="card-body">
+            <div class="input-group mb-2">
+              <div class="input-group-prepend">
+                <span class="input-group-text" style="width: 100px;">IMAGE</span>
+              </div>
+              <input type="text" class="form-control image-input" aria-label="File name of image to load with extension" placeholder="myimage.png">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary image-btn" type="button" id="button-addon2">LOAD</button>
+              </div>
+            </div>
+            <div class="input-group mb-2">
+              <div class="input-group-prepend">
+                <span class="input-group-text" style="width: 100px;">POINTS</span>
+              </div>
+              <input type="text" class="form-control points-input" aria-label="File name of points file with extension" placeholder="myfile.txt">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary points-btn" type="button" id="button-addon2">LOAD</button>
+              </div>
+            </div>
+            <div class="input-group mb-2">
+              <div class="btn-group" role="group" aria-label="Basic example">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text" style="width: 140px;">LINE COLOR</span>
+                    </div>
+                <button type="button" class="btn btn-secondary color" data-id="red"></button>
+                <button type="button" class="btn btn-secondary color" data-id="green"></button>
+                <button type="button" class="btn btn-secondary color" data-id="blue"></button>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary save-btn">SAVE LANDMARKS </button>
+          
+          </div>
+        </div>
+      </div>
+
     </div>
-    <script src="js/lib/p5.min.js"></script>
-    <script src="js/lib/addons/p5.dom.min.js"></script>
-    <script src="js/sketch.js"></script>
-  </body>
+  </div>
+
+  <script src="js/lib/p5.min.js"></script>
+  <script src="js/lib/addons/p5.dom.min.js"></script>
+  <script src="js/sketch.js"></script>
+</body>
+
 </html>

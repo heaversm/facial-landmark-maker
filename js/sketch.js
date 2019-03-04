@@ -19,40 +19,85 @@ let cGreen,cBlue,cRed;
 let c; //canvas
 let img;
 let imgName = '002.png';
-let fileName = imgName.substring(0, imgName.indexOf('.')) + '.txt';
+let pointsFileName = imgName.substring(0, imgName.indexOf('.')) + '.txt';
 let writer;
 
-let instructionsAreVisible = true;
 
-let $closeButton = document.querySelector('.close');
-let $instructions = document.querySelector('.instructions');
 let $colors = document.querySelectorAll('.color');
 let $saveButton = document.querySelector('.save-btn');
-let $loadButton = document.querySelector('.load-btn');
-let $fileInput = document.querySelector('.file-input');
+let $imageButton = document.querySelector('.image-btn');
+let $imageInput = document.querySelector('.image-input');
+let $pointsButton = document.querySelector('.points-btn');
+let $pointsInput = document.querySelector('.points-input');
 let activeColor, secondaryColor, highlightedColor;
+
+let loadedPoints = [];
+let loadedPointsArr = [];
 
 function preload() {
   data = loadJSON('assets/face-points.json');
   let urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has('image')){
-    minimizeInstructions();
+    //minimizeUI();
     imgName = urlParams.get('image');
-    fileName = imgName.substring(0, imgName.indexOf('.')) + '.txt';
+    pointsFileName = imgName.substring(0, imgName.indexOf('.')) + '.txt';
+    $imageInput.value = imgName;
   }
   img = loadImage(`assets/${imgName}`); // Load the image
+
+  let pointsFile;
+  if (urlParams.has('points')){
+    //minimizeUI();
+    pointsFile = urlParams.get('points');
+    pointsFileName = pointsFile;
+    $pointsInput.value = pointsFileName;
+    loadedPoints = loadStrings(`assets/${pointsFile}`,pointsLoadSuccess,pointsLoadError);
+  }
+
+}
+
+function pointsLoadSuccess(){
+  console.log('success');
+}
+
+function pointsLoadError(){
+  console.log('error');
 }
 
 function drawPointsInitial() {
-  //draw initial face landmarks
   let shapesData = data['shapes'];
+  //draw initial face landmarks
+  if (loadedPoints.length){
+
+    for (var j=0;j<loadedPoints.length;j++){
+      let thisPointStr = loadedPoints[j];
+      let thisPointsArr = thisPointStr.split(" ");
+      let thisPointsObj = {
+        "x": parseInt(thisPointsArr[0]),
+        "y": parseInt(thisPointsArr[1]),
+      }
+      if (!isNaN(thisPointsObj.x) &&  !isNaN(thisPointsObj.y)){
+        loadedPointsArr.push(thisPointsObj);
+      }
+    }
+  }
+
   for (let i = 0; i < shapesData.length; i++) {
     // Get each object in the array
     let shapeData = shapesData[i];
     let shapeArr = [];
+    let startIndex = shapeData.startIndex;
 
     for (let j = 0; j < shapeData.points.length; j++) {
-      let position = shapeData.points[j];
+      let position;
+
+      if (loadedPoints.length){
+        const lpIndex = startIndex + j;
+        position = loadedPointsArr[lpIndex];
+      } else {
+        position = shapeData.points[j];
+      }
+      
       position.isSelected = false; //for marquee selection
       let posX = map(position.x,0,ww,0,ww*sfX);
       let posY = map(position.y,0,wh,0,wh*sfY);
@@ -63,11 +108,12 @@ function drawPointsInitial() {
     shapes.push(shapeArr);
 
   }
+  
 
 }
 
 function setup() {
-  writer = createWriter(fileName);
+  writer = createWriter(pointsFileName);
   imgWidth = img.width;
   imgHeight = img.height;
   c = createCanvas(imgWidth, imgHeight);
@@ -85,23 +131,35 @@ function setup() {
   noFill();
   stroke(activeColor);
   drawPointsInitial();
-  $closeButton.addEventListener('click',onCloseClick);
   $saveButton.addEventListener('click',handlePrintLandmarks);
-  $loadButton.addEventListener('click',handleLoadImage);
+  $imageButton.addEventListener('click',handleLoadImage);
+  $pointsButton.addEventListener('click',handleLoadPoints);
   
 
   $colors.forEach((el)=>{
     el.addEventListener('click',()=>{
       handleColorChange(el.dataset.id);
     });
-  })
+  });
+  document.querySelector('canvas').focus();
+}
+
+function minimizeUI(){
+  $('.collapse').collapse('hide');
 }
 
 function handleLoadImage(){
-  const fileToLoad = $fileInput.value;
+  const fileToLoad = $imageInput.value;
   let urlToLoad = `http://${window.location.host}?image=${fileToLoad}`;
   window.location.href = urlToLoad;
 }
+
+function handleLoadPoints(){
+  const fileToLoad = $pointsInput.value;
+  let urlToLoad = `http://${window.location.host}?points=${fileToLoad}`;
+  window.location.href = urlToLoad;
+}
+
 
 function handleColorChange(color){
   switch(color){
@@ -118,26 +176,6 @@ function handleColorChange(color){
       secondaryColor = cGreen;
       break;
   }
-}
-
-function onCloseClick(){
-  if (instructionsAreVisible){
-    minimizeInstructions();
-  } else {
-    maximizeInstructions();
-  }
-}
-
-function minimizeInstructions(){
-  $instructions.classList.add('hide');
-  instructionsAreVisible = false;
-  $closeButton.innerHTML = 'i'
-}
-
-function maximizeInstructions(){
-  $instructions.classList.remove('hide');
-  instructionsAreVisible = true;
-  $closeButton.innerHTML = '-'
 }
 
 function mousePressed() {
