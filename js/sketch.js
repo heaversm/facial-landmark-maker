@@ -8,6 +8,7 @@ let closestShapeIndex;
 let closestCoordIndex;
 let mouseMovedX, mouseMovedY, mouseStartX, mouseStartY;
 let selectedPoints = [];
+let activePicker,secondaryPicker;
 
 let ww = 256;
 let wh = 256;
@@ -119,13 +120,22 @@ function setup() {
   c = createCanvas(imgWidth, imgHeight);
   sfX = imgWidth/ww;
   sfY = imgHeight/wh;
-  cGreen = color(123,255,0);
-  cBlue = color(0,255,255);
-  cRed = color(255,64,255);
-  cYellow = color(255,237,0);
-  activeColor = cGreen;
-  secondaryColor = cRed;
-  highlightedColor = cYellow;
+  cGreen = color('#28a745');
+  cBlue = color('#0062cc');
+  cRed = color('#dc3545');
+  cYellow = color('#ffc107');
+  cWhite = color('#ffffff');
+  activeColor = cBlue;
+  secondaryColor = cYellow;
+  highlightedColor = cWhite;
+  activePicker = createColorPicker(activeColor)
+    .parent('active-picker-container')
+    .addClass('color-picker-input');
+  secondaryPicker = createColorPicker(secondaryColor)
+    .parent('secondary-picker-container')
+    .addClass('color-picker-input');
+  activePicker.input(setActiveColor);
+  secondaryPicker.input(setSecondaryColor);
   background(0);
   noSmooth();
   noFill();
@@ -176,6 +186,14 @@ function handleColorChange(color){
       secondaryColor = cGreen;
       break;
   }
+}
+
+function setActiveColor(){
+  activeColor = activePicker.color();
+}
+
+function setSecondaryColor(){
+  secondaryColor = secondaryPicker.color();
 }
 
 function mousePressed() {

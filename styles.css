@@ -15,25 +15,13 @@ body.mousePressed canvas {
   margin-right: 5px;
 }
 
-.color {
-  width: 38px;
-}
-
-.color[data-id='green']{
-  background: rgb(123,255,0);
-}
-
-.color[data-id='blue']{
-  background: rgb(0,255,255);
-}
-
-.color[data-id='red']{
-  background: rgb(255,64,255);
-}
-
 .controls-container {
   max-width: 40vw;
   right: 10px;
   top: 10px;
   left: auto;
+}
+
+.color-picker-input {
+  height: 100%;
 }
