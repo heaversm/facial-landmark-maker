@@ -17,6 +17,8 @@ If you want to load a previous landmarks file, specify its URL (web) or file pat
 
 If the lines are hard to see on your image, you can choose a color to change the line theme.
 
+Click `save landmarks` to write the facial landmarks to a file. The save location will vary based on your browser preferences. Note that you will need to place these in an accessible path in your project if you want to load them later. They do not save to the project path (e.g. `assets/` folder) by default.
+
 
 ## Troubleshooting
 
@@ -35,3 +37,7 @@ If the lines are hard to see, try changing the colors by clicking on the color s
 Then drag the points to fit the new image. 
 
 By default, it will select the closest point to wherever you clicked. However, if you hold SHIFT first, you can drag to select a group of points. When you let go, you can click again to drag the multiple points. After doing so, it will reset to single point select mode, so you need to hit SHIFT again to drag and select multiple points again.
+
+Once you're satisfied, click the `save landmarks` button.
+
+When this file saves, you can test it by placing it online somewhere, and specifying the web address to that file, e.g. `http://myserver.com/assets_002.txt` in the points field, and hitting load.
