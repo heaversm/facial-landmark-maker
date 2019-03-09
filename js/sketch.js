@@ -20,7 +20,7 @@ let cGreen,cBlue,cRed, cYellow, cWhite; //some color variables
 let c; //canvas
 let img;
 let imgName = 'assets/001.png';
-let pointsFileName = imgName.substring(0, imgName.indexOf('.')) + '.txt'; //write to a file with a name based off the loaded image
+let pointsFileName = '001.txt'; //write to a file with a name based off the loaded image
 let writer;
 
 
@@ -40,7 +40,13 @@ function preload() {
   let urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has('image')){
     imgName = urlParams.get('image');
-    pointsFileName = imgName.substring(0, imgName.indexOf('.')) + '.txt';
+    const lastSlashIndex = imgName.lastIndexOf('/');
+    if (lastSlashIndex == -1){ //if no path specified for image
+      pointsFileName = imgName.substring(0, imgName.indexOf('.')) + '.txt';
+    } else { //get everything after the last slash as the image name
+      pointsFileName = imgName.substring(lastSlashIndex+1, imgName.indexOf('.')) + '.txt';
+    }
+    
     $imageInput.value = imgName;
   }
   img = loadImage(`${imgName}`,imgLoadSuccess,imgLoadError); // Load the image
@@ -60,7 +66,7 @@ function pointsLoadSuccess(){
 }
 
 function pointsLoadError(){
-  //console.log('error');
+  window.location = `http://${window.location.host}`;
 }
 
 function imgLoadSuccess(){
@@ -68,7 +74,7 @@ function imgLoadSuccess(){
 }
 
 function imgLoadError(){
-  //console.log('error');
+  window.location = `http://${window.location.host}`;
 }
 
 function drawPointsInitial() {
