@@ -34,10 +34,11 @@
 
         <div id="collapseOne" class="collapse text-collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
           <div class="card-body">
-            <p>Specify the URL to the image you want to load. If you are using this locally, make sure to include the directory from this file (e.g. <em>'assets/myimage.png'</em>. Then hit <em>load</em>.</p>
-              <p>Drag the points to fit the image. Then click <em>save landmarks</em> to save the points to a text file.</p>
-              <p>If you want to load a previous landmarks file, specify its URL (web) or file path (local), e.g.<em>'assets/myfile.txt'</em>, and click <em>load</em></p>
+            <p>Specify the URL to the image you want to load. If you are using this locally, make sure to include the directory from this file (e.g. <span class="highlight">'assets/myimage.png'</span>. Then hit <span class="highlight">load</span>.</p>
+              <p>Drag the points to fit the image. Then click <span class="highlight">save landmarks</span> to save the points to a text file.</p>
+              <p>If you want to load a previous landmarks file, specify its URL (web) or file path (local), e.g.<span class="highlight">'assets/myfile.txt'</span>, and click <span class="highlight">load</span></p>
               <p>If the lines are hard to see on your image, you can choose a color to change the line theme.</p>
+              <p>Hit the undo button or type 'z' <span class="highlight">z</span> to undo your last move.</p>
           </div>
         </div>
       </div>
@@ -105,8 +106,10 @@
                 </div>
                 <div class="input-group-prepend" id="selected-picker-container"></div>
             </div>
-          
-            <button type="button" class="btn btn-primary save-btn">SAVE LANDMARKS </button>
+            <div class="button-group">
+              <button type="button" class="btn btn-danger undo-btn">UNDO</button>
+              <button type="button" class="btn btn-primary save-btn">SAVE LANDMARKS </button>
+            </div>
           
           </div>
         </div>
