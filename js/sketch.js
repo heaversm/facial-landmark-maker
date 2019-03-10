@@ -26,6 +26,7 @@ let writer;
 
 let $colors = document.querySelectorAll('.color');
 let $saveButton = document.querySelector('.save-btn');
+let $undoButton = document.querySelector('.undo-btn');
 let $imageButton = document.querySelector('.image-btn');
 let $imageInput = document.querySelector('.image-input');
 let $pointsButton = document.querySelector('.points-btn');
@@ -34,6 +35,8 @@ let activeColor, secondaryColor, selectedColor;
 
 let loadedPoints = [];
 let loadedPointsArr = [];
+let undoArr = []; //holds one previous points array for ability to undo
+let preserveArr = []; //holds most recent array;
 
 function preload() {
   data = loadJSON('assets/face-points.json');
@@ -121,8 +124,6 @@ function drawPointsInitial() {
     shapes.push(shapeArr);
 
   }
-  
-
 }
 
 function setup() {
@@ -130,6 +131,8 @@ function setup() {
   imgWidth = img.width;
   imgHeight = img.height;
   c = createCanvas(imgWidth, imgHeight);
+  c.mousePressed(handleMousePressed);
+  c.mouseReleased(handleMouseReleased);
   sfX = imgWidth/ww;
   sfY = imgHeight/wh;
   cGreen = color('#28a745');
@@ -158,6 +161,7 @@ function setup() {
   stroke(activeColor);
   drawPointsInitial();
   $saveButton.addEventListener('click',handlePrintLandmarks);
+  $undoButton.addEventListener('click',handleUndo);
   $imageButton.addEventListener('click',()=>{
     handleLoad('image')
   });
@@ -227,18 +231,27 @@ function setSelectedColor(){
   selectedColor = selectedPicker.color();
 }
 
-function mousePressed() {
+function handleMousePressed() {
+  
   if (!isMousePressed){
-    handleMousePressed();
+    undoArr = []; //clear any existing values
+    isMousePressed = true;
+    mouseStartX = mouseX;
+    mouseStartY = mouseY;
+    select('body').addClass('mousePressed');
+    if (keyIsDown(SHIFT)){
+      marqueeIsActive = true;
+    }
     mousePressedCoords[0] = mouseX;
     mousePressedCoords[1] = mouseY;
     let smallestDist = 1000; //start arbitrarily high
     for (let i = 0; i < shapes.length; i++) {
       let curShape = shapes[i];
+      let tempShape = [];
       for (let j=0; j<curShape.length;j++){
-        
         let curCoord = curShape[j];
-        
+        let tempCoord = [curCoord[0],curCoord[1]];
+        tempShape.push(tempCoord);
         let curDist = dist(mouseX, mouseY, curCoord[0], curCoord[1]);
         if (curDist < smallestDist){
           smallestDist = curDist;
@@ -246,23 +259,10 @@ function mousePressed() {
           closestCoordIndex = j;
         }
       }
+      undoArr.push(tempShape); //populate undo array with current state of shapes array
     }
   }
   
-}
-
-function handleMousePressed(){
-  isMousePressed = true;
-  mouseStartX = mouseX;
-  mouseStartY = mouseY;
-  select('body').addClass('mousePressed');
-  if (keyIsDown(SHIFT)){
-    marqueeIsActive = true;
-  }
-}
-
-function mouseReleased() {
-  handleMouseReleased();
 }
 
 function handleMouseReleased(){
@@ -375,12 +375,31 @@ function selectMultiplePoints(){
   rect(mouseStartX, mouseStartY, mouseMovedX, mouseMovedY);
 }
 
+function keyPressed(){
+  if (key == 'z'){
+    handleUndo();
+  }
+}
+
+function handleUndo(){
+  shapes = [];
+  for (let i = 0; i < undoArr.length; i++) {
+    let curShape = undoArr[i];
+    let tempArr = [];
+    for (let j=0; j<curShape.length;j++){
+      let curCoord = curShape[j];
+      tempArr.push(curCoord);
+    }
+    shapes.push(tempArr);
+  }
+}
+
 function draw() {
   background(0);
   image(img, 0, 0);
+
   if (isMousePressed){
     if (keyIsDown(SHIFT)){
-      //marqueeIsActive = true;
       selectMultiplePoints();
     } else {
       if (!marqueeIsActive){
@@ -419,5 +438,4 @@ function draw() {
     }
   }
 
-  
 }
